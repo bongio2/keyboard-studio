@@ -8,7 +8,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 APP="Keyboard Studio.app"
-DEST="/Applications/$APP"
+DEST="/Users/ramiro/SSD/Applications/$APP"
 
 "$ROOT/scripts/bundle.sh" release
 
