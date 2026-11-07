@@ -26,11 +26,12 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BINARY" "$APP/Contents/MacOS/Keyboard Studio"
 cp "$ROOT/Resources/Info.plist" "$APP/Contents/Info.plist"
 
-# SwiftPM keeps localizations in its own resource bundle, which Bundle.module
-# looks for next to the executable.
+# Bundle.module searches Bundle.main.resourceURL inside an app, not the
+# Contents/MacOS directory that holds its executable.
 for bundle in "$(dirname "$BINARY")"/*.bundle; do
-  [ -e "$bundle" ] && cp -R "$bundle" "$APP/Contents/MacOS/"
+  [ -e "$bundle" ] && cp -R "$bundle" "$APP/Contents/Resources/"
 done
+bash "$ROOT/scripts/check-bundle.sh" "$APP"
 
 cp "$ROOT/Resources/icon/AppIcon.icns" "$APP/Contents/Resources/AppIcon.icns"
 
@@ -67,7 +68,7 @@ fi
 # --deep is deliberately not used (Apple discourages it), so nested bundles are
 # signed first, innermost outwards — an unsigned nested bundle would make the
 # outer signature invalid.
-for nested in "$APP/Contents/MacOS"/*.bundle; do
+for nested in "$APP/Contents/Resources"/*.bundle; do
   [ -e "$nested" ] && codesign --force --sign "$IDENTITY" "$nested"
 done
 
